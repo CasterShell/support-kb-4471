@@ -1,0 +1,64 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: CasterShell
+status: open
+reviewed: 2026-10-29
+signature: CasterShell
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) was merged as one issue and marked known: "the parser reads dates month
+first, and our tenants write the day first." That is true for most of its reports, not all. Read by
+tenant and by what each report says, #4471 holds three problems. Each now has its own ticket.
+
+<Callout kind="warn">
+The fix queued for #4471 fixes the parser only. The other two problems stay after it ships.
+</Callout>
+
+## The split
+
+<ProblemTable
+  ticket={4471}
+  issues={{
+    parser: 'https://github.com/CasterShell/support-kb-4471/issues/1',
+    hint: 'https://github.com/CasterShell/support-kb-4471/issues/2',
+    oneDay: 'https://github.com/CasterShell/support-kb-4471/issues/3',
+  }}
+/>
+
+- **parser.** The shared parser reads every date month first, and every tenant on file writes the
+  day first. 7 April becomes 4 July.
+- **hint.** The booking-v3 form prints `MM/DD/YYYY` under its date field. Clients type what it
+  says, and the form reads the date day first. The parser never sees the flip, so its fix cannot
+  reach these.
+- **oneDay.** The date moves by one day: "Client in Lisbon got Tuesday. Client in Toronto got
+  Monday." No day/month flip does that. The desk noted these reports in `desk-notes.json` and
+  filed them under the parser anyway.
+
+## Why one ticket hid them
+
+- **Intake tags guess.** `intakeTag` comes from the reporter's browser. The cause comes from the
+  tenant: where they are and which booking form they run (`causes.ts`). Counting by tag gives the
+  wrong size for the hint problem.
+- **The cause table counts the one-day moves as parser.** It footnotes them and adds them to the
+  parser row, so the table showed two causes where there are three.
+- **Merging hides the rest.** One ticket with one count reads as one bug. The table the desk
+  already had, for the same ticket:
+
+<CauseTable ticket={4471} />
+
+## For the desk
+
+- Close #4471 against the parser fix only. Track the hint and one-day problems on their own
+  tickets.
+- Before merging a report into a big ticket, check its tenant and channel, not its tag.
+- A report that does not read as a flip is not a duplicate, even with the same subject.
+
+<RenderStamp {signature} />
