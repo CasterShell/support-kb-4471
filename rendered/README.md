@@ -4,6 +4,6 @@ Output of `npm install && npm run build` (SvelteKit + mdsvex, `svelte.config.js`
 
 - The new page: [`kb/incidents/4471/problems.html`](kb/incidents/4471/problems.html), source `src/routes/kb/incidents/4471/problems/+page.svx`.
 - Signed `CasterShell`; its stamp reads **desk ref DR-RNN9-H9B9**.
-- Its table is built from `src/lib/data/reports-4471.json` at render time: 412 reports merged into #4471, 3 problems (parser 374 · hint 33 · oneDay 5), each linked to its issue.
+- Its table is built from `src/lib/data/reports-4471.json` at render time, counted the way the desk's view counts: 412 reports merged into #4471, 3 problems: parser 379 (fixed), hint 33 (won't fix, booking-v3 retired), oneDay 5 (filed under parser, still open). Each links to its issue.
 
 The "reviewed … days ago" line counts from the build date (2026-10-29).

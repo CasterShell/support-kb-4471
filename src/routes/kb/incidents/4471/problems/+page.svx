@@ -16,39 +16,44 @@ signature: CasterShell
 
 [#4471](/kb/incidents/4471) was merged as one issue and marked known: "the parser reads dates month
 first, and our tenants write the day first." That is true for most of its reports, not all. Read by
-tenant and by what each report says, #4471 holds three problems. Each now has its own ticket.
+tenant and by what each report says, #4471 holds three problems. Each has its own ticket.
 
 <Callout kind="warn">
-The fix queued for #4471 fixes the parser only. The other two problems stay after it ships.
+Engineering closed #4471 on 5 October: the parser is fixed, and the booking-v3 hint won't be fixed
+because the form is retired. Nobody has looked at the one-day moves. Closing #4471 does not close
+that problem.
 </Callout>
 
 ## The split
 
+Counted the way the desk's view counts: each report where it is filed, by tenant. The one-day
+moves are filed under the parser and listed again on their own row.
+
 <ProblemTable
   ticket={4471}
   issues={{
-    parser: 'https://github.com/CasterShell/support-kb-4471/issues/1',
-    hint: 'https://github.com/CasterShell/support-kb-4471/issues/2',
-    oneDay: 'https://github.com/CasterShell/support-kb-4471/issues/3',
+    parser: { url: 'https://github.com/CasterShell/support-kb-4471/issues/1', state: 'fixed · fix(dates): parse dd/mm for eu locales' },
+    hint: { url: 'https://github.com/CasterShell/support-kb-4471/issues/2', state: "won't fix · booking-v3 form retired" },
+    oneDay: { url: 'https://github.com/CasterShell/support-kb-4471/issues/3', state: 'open · no fix planned yet' },
   }}
 />
 
-- **parser.** The shared parser reads every date month first, and every tenant on file writes the
-  day first. 7 April becomes 4 July.
-- **hint.** The booking-v3 form prints `MM/DD/YYYY` under its date field. Clients type what it
-  says, and the form reads the date day first. The parser never sees the flip, so its fix cannot
-  reach these.
+- **parser.** The shared parser read every date month first, and every tenant on file writes the
+  day first. 7 April became 4 July. Fixed: the parser now reads dd/mm for these locales.
+- **hint.** The booking-v3 form printed `MM/DD/YYYY` under its date field. Clients typed what it
+  said, and the form read the date day first. The parser fix never reached these. The form is
+  retired, so no new reports come in this way.
 - **oneDay.** The date moves by one day: "Client in Lisbon got Tuesday. Client in Toronto got
-  Monday." No day/month flip does that. The desk noted these reports in `desk-notes.json` and
-  filed them under the parser anyway.
+  Monday." No day/month flip does that, so neither change above fixes it. The desk noted these
+  reports in `desk-notes.json` and filed them under the parser by tenant.
 
 ## Why one ticket hid them
 
 - **Intake tags guess.** `intakeTag` comes from the reporter's browser. The cause comes from the
   tenant: where they are and which booking form they run (`causes.ts`). Counting by tag gives the
   wrong size for the hint problem.
-- **The cause table counts the one-day moves as parser.** It footnotes them and adds them to the
-  parser row, so the table showed two causes where there are three.
+- **The cause table files the one-day moves under the parser.** It footnotes them, so they read as
+  part of the parser bug and close with it.
 - **Merging hides the rest.** One ticket with one count reads as one bug. The table the desk
   already had, for the same ticket:
 
@@ -56,8 +61,8 @@ The fix queued for #4471 fixes the parser only. The other two problems stay afte
 
 ## For the desk
 
-- Close #4471 against the parser fix only. Track the hint and one-day problems on their own
-  tickets.
+- Keep the one-day ticket open. A report that lands one day off after the parser fix is this
+  problem, not a regression of #4471.
 - Before merging a report into a big ticket, check its tenant and channel, not its tag.
 - A report that does not read as a flip is not a duplicate, even with the same subject.
 
